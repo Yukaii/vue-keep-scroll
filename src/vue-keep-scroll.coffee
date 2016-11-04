@@ -1,15 +1,15 @@
 vueKeepScroll = undefined
 slice = [].slice
 vueKeepScroll = install: (Vue) ->
-  Vue.directive 'keep-scroll', bind: ->
+  Vue.directive 'keep-scroll', bind: (el, binding, vnode) ->
     oldAttached = undefined
-    @el.addEventListener 'scroll', (e) ->
+    el.addEventListener 'scroll', (e) ->
       ele = undefined
       ele = e.target
       ele.setAttribute 'data-vuescrlpos', ele.scrollLeft + '-' + ele.scrollTop
-    oldAttached = @vm.attached
+    oldAttached = vnode.context.activated
 
-    @vm.attached = ->
+    vnode.context.activated = ->
       args = undefined
       ele = undefined
       i = undefined
@@ -34,7 +34,7 @@ vueKeepScroll = install: (Vue) ->
       if oldAttached != undefined then oldAttached.call.apply(oldAttached, [ this ].concat(slice.call(args))) else undefined
       return
 
-    @vm.$on 'hook:attached', @vm.attached
+    vnode.context.$on 'hook:activated', vnode.context.activated
     return
 if typeof exports == 'object'
   module.exports = vueKeepScroll
